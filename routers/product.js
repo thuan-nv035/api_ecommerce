@@ -57,11 +57,12 @@ router.get('/findById/:id', verifyTokenAndAdmin, async (req, res)=> {
 router.get("/", async (req, res) => {
     const qNew = req.query.new;
     const qCategory = req.query.category;
+    const status = {status: true }
     try {
         let products;
 
         if (qNew) {
-            products = await Product.find().sort({ createdAt: -1 }).limit(1);
+            products = await Product.find(status).sort({ createdAt: -1 }).limit(1)
         } else if (qCategory) {
             products = await Product.find({
                 categories: {
@@ -69,7 +70,7 @@ router.get("/", async (req, res) => {
                 },
             });
         } else {
-            products = await Product.find();
+            products = await Product.find(status);
         }
 
         res.status(200).json(products);
