@@ -2,7 +2,9 @@ const router = require('express').Router()
 const User = require('../models/User')
 const CryptoJS = require("crypto-js");
 const jwt = require('jsonwebtoken');
-
+const passport = require('passport');
+const FacebookStrategy = require('passport-facebook').Strategy;
+require('dotenv').config()
 
 // REGISTRY
 
@@ -61,5 +63,33 @@ router.delete('/:commentId', async (req, res) => {
     }
 });
 
+passport.use(
+    new FacebookStrategy(
+        {
+            clientID: process.env.FACEBOOK_APP_ID,
+            clientSecret: process.env.FACEBOOK_APP_SECRET,
+            callbackURL: process.env.CALLBACK_URL,
+            profileFields: ['id', 'displayName', 'email'],
+        },
+        function (accessToken, refreshToken, profile, done) {
+            // Xử lý thông tin người dùng đăng nhập thành công
+            // Ở đây bạn có thể lưu thông tin người dùng vào cơ sở dữ liệu hoặc thực hiện các tác vụ khác
+            console.log(profile);
+            return done(null, profile);
+        }
+    )
+);
+
+// Đăng nhập bằng Facebook
+router.get('/facebook', passport.authenticate('facebook'));
+
+// Xử lý sau khi đăng nhập thành công
+router.get(
+    '/facebook/callback',
+    passport.authenticate('facebook', {
+        successRedirect: '/dashboard',
+        failureRedirect: '/login',
+    })
+);
 
 module.exports = router

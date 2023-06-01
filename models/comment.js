@@ -1,8 +1,8 @@
 const mongoose = require('mongoose')
 
 const CommentSchema = new mongoose.Schema({
-    userId: {type: 'string', required: true},
-    productId: {type: 'string', required: true},
+    userId: {type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true},
+    productId: {type: mongoose.Schema.Types.ObjectId,  ref: 'Product', required: true},
     content: {type: 'string', required: true},
     drink: {
         type: String,
